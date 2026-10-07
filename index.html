@@ -1,166 +1,694 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neon Miner P2E | Juego Minero</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
-  
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1148070696364878"
-     crossorigin="anonymous"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-  <script>
-    window.adsbygoogle = window.adsbygoogle || [];
-    var adBreak = adConfig = function(o) {adsbygoogle.push(o);};
-    adConfig({ sound: 'on' });
-  </script>
-</head>
-<body class="bg-slate-950 text-white font-sans min-h-screen flex flex-col justify-between">
-
-  <!-- BANNER P2E -->
-  <header class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-4 text-center border-b border-purple-500/30">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
-        <span class="text-2xl">🎁</span>
-        <p class="text-sm sm:text-base font-semibold text-purple-200">
-          RECOMPENSAS P2E: El Top 3 semanal recibe pagos directos vía <span class="text-yellow-400">Pago Móvil, Zinli, Binance Pay o PayPal</span>.
-        </p>
-      </div>
-      <a href="terminos.html" class="text-xs text-purple-300 underline hover:text-white">Ver reglas y condiciones</a>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-3 gap-6 my-auto">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Miner P2E - Dashboard</title>
     
-    <!-- SECCIÓN JUEGO (IZQUIERDA) -->
-    <div class="lg:col-span-1 bg-slate-900/80 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center shadow-2xl">
-      <h1 class="text-2xl font-bold tracking-wider text-cyan-400 mb-2">NEON MINER</h1>
-      
-      <!-- SALDO -->
-      <div class="my-4">
-        <p class="text-xs text-slate-400 uppercase tracking-widest">Saldo Total Neon Coins</p>
-        <p id="coin-count" class="text-5xl font-extrabold text-cyan-300 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">0</p>
-        <p class="text-xs text-slate-400 mt-1"><span id="cps-display">0</span> /seg (Minería Auto)</p>
-      </div>
+    <!-- GOOGLE ADSENSE & H5 GAMES ADS -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1148070696364878" crossorigin="anonymous"></script>
+    <script>
+         window.adsbygoogle = window.adsbygoogle || [];
+         var adBreak = adConfig = function(o) {adsbygoogle.push(o);};
+         adConfig({ sound: 'on' });
+    </script>
 
-      <!-- BOTÓN PRINCIPAL DE CLIC -->
-      <button id="mine-btn" class="my-6 relative group active:scale-95 transition-transform duration-75 focus:outline-none">
-        <div class="w-40 h-40 rounded-full bg-gradient-to-tr from-cyan-600 to-purple-600 p-1 shadow-[0_0_30px_rgba(6,182,212,0.4)] group-hover:shadow-[0_0_50px_rgba(168,85,247,0.6)]">
-          <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center border border-cyan-400/50">
-            <span class="text-5xl group-hover:scale-110 transition-transform">💎</span>
-          </div>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #060911;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1100px;
+            background: #0b101d;
+            border: 2px solid #00f3ff;
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background: #111827;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo h1 {
+            font-size: 22px;
+            color: #00f3ff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .tag-p2e {
+            background: #ff0055;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .top-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pool-badge {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid #00f3ff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #00f3ff;
+            font-weight: bold;
+        }
+
+        .status-online {
+            color: #00ff88;
+            font-size: 12px;
+            font-weight: bold;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #00ff88;
+        }
+
+        /* MAIN CONTENT - GRID PC / STACK MOBILE */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                min-height: 580px;
+            }
+        }
+
+        /* LEFT PANEL: MINING STATION */
+        .mining-station {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            background: radial-gradient(circle at center, #131c31 0%, #080d19 100%);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        @media (min-width: 768px) {
+            .mining-station {
+                border-bottom: none;
+                border-right: 1px solid rgba(0, 243, 255, 0.2);
+            }
+        }
+
+        .banner-info {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), rgba(0, 243, 255, 0.15));
+            border: 1px solid #ff0055;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #ffb3d1;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .counter-section {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .coins-label {
+            font-size: 12px;
+            color: #8a99ad;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .coins-val {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 15px #00f3ff;
+            font-family: monospace;
+        }
+
+        .stats-pills {
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            font-size: 13px;
+        }
+
+        .pill-item {
+            color: #00f3ff;
+            font-weight: bold;
+        }
+
+        /* CRYSTAL BUTTON */
+        .crystal-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 15px 0;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crystal-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.7));
+            transition: transform 0.05s ease-out;
+        }
+
+        .crystal-container:active .crystal-svg {
+            transform: scale(0.92);
+        }
+
+        .click-hint {
+            font-size: 12px;
+            color: #61758f;
+        }
+
+        /* FLOATING TEXT */
+        .floating-text {
+            position: absolute;
+            color: #00f3ff;
+            font-weight: bold;
+            font-size: 22px;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 8px #000;
+            z-index: 100;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
+        }
+
+        /* RIGHT PANEL: DASHBOARD CONTROL */
+        .control-panel {
+            background: #0e1424;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: #151d30;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            background: transparent;
+            border: none;
+            color: #61758f;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #00f3ff;
+            border-bottom-color: #00f3ff;
+            background: rgba(0, 243, 255, 0.08);
+        }
+
+        .tab-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 480px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* UPGRADES LIST */
+        .upgrade-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #162035;
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-info h4 {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .upgrade-info p {
+            font-size: 12px;
+            color: #00f3ff;
+            margin-top: 2px;
+        }
+
+        .btn-action {
+            background: #00f3ff;
+            color: #060911;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background: #80f9ff;
+        }
+
+        .btn-action:disabled {
+            background: #25334a;
+            color: #556882;
+            cursor: not-allowed;
+        }
+
+        /* FORM INPUTS */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #8a99ad;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: #162035;
+            border: 1px solid #00f3ff;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #ff0055;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .status-box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: #00ff88;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* RANKING TABLE */
+        .rank-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: #162035;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .rank-row.top1 { border-left: 4px solid #ffd700; color: #ffd700; }
+        .rank-row.top2 { border-left: 4px solid #c0c0c0; color: #c0c0c0; }
+        .rank-row.top3 { border-left: 4px solid #cd7f32; color: #cd7f32; }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #00f3ff;
+            color: #060911;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            display: none;
+            box-shadow: 0 0 15px rgba(0,243,255,0.5);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="brand-logo">
+            <h1>NEON MINER</h1>
+            <span class="tag-p2e">P2E DASHBOARD</span>
         </div>
-      </button>
+        <div class="top-stats">
+            <div class="pool-badge">POZO SEMANAL: $25.00 USD</div>
+            <div class="status-online">EN LÍNEA 🟢</div>
+        </div>
+    </div>
 
-      <!-- BOTÓN ANUNCIO RECOMPENSADO -->
-      <button id="ad-btn" onclick="watchAd()" class="w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2">
-        <span>📺</span> Ver Anuncio (+100 Monedas)
-      </button>
-
-      <!-- TABLA DE MEJORAS -->
-      <div class="w-full mt-6 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
-        <h2 class="text-sm font-bold text-slate-300 mb-2 text-left">Mejoras de Minería</h2>
-        <div class="space-y-2">
-          <button id="upgrade-click-btn" class="w-full bg-slate-800 hover:bg-slate-700 p-2.5 rounded-lg flex justify-between items-center text-left border border-slate-700/50">
-            <div>
-              <p class="font-semibold text-xs">Pico Neon (+1/clic)</p>
-              <p id="upgrade-click-cost" class="text-[10px] text-cyan-400">Costo: 10 Monedas</p>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- LEFT: MINING STATION -->
+        <div class="mining-station">
+            <div class="banner-info">
+                🏆 <b>RECOMPENSAS P2E:</b> El Top 3 del ranking semanal recibe pagos directos por <b>Zinli</b>, <b>Binance Pay</b>, <b>PayPal</b> o <b>Pago Móvil</b>.
             </div>
-            <span id="click-power" class="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-300">Nvl 1</span>
-          </button>
 
-          <button id="upgrade-auto-btn" class="w-full bg-slate-800 hover:bg-slate-700 p-2.5 rounded-lg flex justify-between items-center text-left border border-slate-700/50">
-            <div>
-              <p class="font-semibold text-xs">Robot Minero (+1/seg)</p>
-              <p id="upgrade-auto-cost" class="text-[10px] text-purple-400">Costo: 50 Monedas</p>
+            <div class="counter-section">
+                <div class="coins-label">SALDO TOTAL NEON COINS</div>
+                <div class="coins-val" id="coinCount">0</div>
             </div>
-            <span id="auto-power" class="text-[10px] bg-slate-900 px-2 py-1 rounded text-slate-300">Nvl 0</span>
-          </button>
+
+            <div class="stats-pills">
+                <div class="pill-item">⚡ <span id="clickPower">1</span> /clic</div>
+                <div class="pill-item">⚙️ <span id="autoPower">0</span> /seg</div>
+            </div>
+
+            <div class="crystal-container" id="crystalBtn">
+                <svg class="crystal-svg" viewBox="0 0 100 100">
+                    <polygon points="50,5 85,25 85,75 50,95 15,75 15,25" fill="none" stroke="#00f3ff" stroke-width="3"/>
+                    <polygon points="50,15 75,30 75,70 50,85 25,70 25,30" fill="none" stroke="#ff0055" stroke-width="1.5"/>
+                    <polygon points="50,25 65,35 65,65 50,75 35,65 35,35" fill="#00f3ff" opacity="0.8"/>
+                </svg>
+            </div>
+
+            <div class="click-hint">👇 Toca o haz clic en el cristal para minar monedas</div>
         </div>
-      </div>
+
+        <!-- RIGHT: CONTROL PANEL -->
+        <div class="control-panel">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('store', this)">🛒 MEJORAS</button>
+                <button class="tab-btn" onclick="switchTab('ranking', this)">🏆 RANKING</button>
+                <button class="tab-btn" onclick="switchTab('profile', this)">💳 PERFIL & PAGOS</button>
+            </div>
+
+            <div class="tab-body">
+                <!-- TAB 1: STORE -->
+                <div id="store" class="tab-content active">
+                    <div class="upgrade-card">
+                        <div class="upgrade-info">
+                            <h4>Pico de Cobre</h4>
+                            <p>+1 por Clic | Costo: <span id="cost1">15</span></p>
+                        </div>
+                        <button class="btn-action" id="btnBuy1" onclick="buyUpgrade(1)">COMPRAR</button>
+                    </div>
+
+                    <div class="upgrade-card">
+                        <div class="upgrade-info">
+                            <h4>Bot Minero</h4>
+                            <p>+2 / Seg | Costo: <span id="cost2">50</span></p>
+                        </div>
+                        <button class="btn-action" id="btnBuy2" onclick="buyUpgrade(2)">COMPRAR</button>
+                    </div>
+
+                    <div class="upgrade-card">
+                        <div class="upgrade-info">
+                            <h4>Taladro Láser</h4>
+                            <p>+10 / Seg | Costo: <span id="cost3">250</span></p>
+                        </div>
+                        <button class="btn-action" id="btnBuy3" onclick="buyUpgrade(3)">COMPRAR</button>
+                    </div>
+
+                    <div class="upgrade-card">
+                        <div class="upgrade-info">
+                            <h4>Reactor Cuántico</h4>
+                            <p>+50 / Seg | Costo: <span id="cost4">1000</span></p>
+                        </div>
+                        <button class="btn-action" id="btnBuy4" onclick="buyUpgrade(4)">COMPRAR</button>
+                    </div>
+
+                    <div class="upgrade-card" style="border-color: #ff0055;">
+                        <div class="upgrade-info">
+                            <h4>Anuncio Recompensado 📺</h4>
+                            <p>Gana +100 Monedas Gratis</p>
+                        </div>
+                        <button class="btn-action" onclick="watchAd()" style="background:#ff0055; color:#fff;">VER ANUNCIO</button>
+                    </div>
+                </div>
+
+                <!-- TAB 2: RANKING -->
+                <div id="ranking" class="tab-content">
+                    <div style="font-size: 12px; color: #8a99ad; margin-bottom: 10px;">CLASIFICACIÓN DE MINEROS DE LA SEMANA</div>
+                    <div class="rank-row top1">
+                        <span>🥇 1. CriptoKing</span>
+                        <span>450.2K</span>
+                    </div>
+                    <div class="rank-row top2">
+                        <span>🥈 2. ValeraMiner</span>
+                        <span>280.9K</span>
+                    </div>
+                    <div class="rank-row top3">
+                        <span>🥉 3. CyberPro</span>
+                        <span>195.4K</span>
+                    </div>
+                    <div class="rank-row" style="border-left: 4px solid #00f3ff; margin-top: 15px;">
+                        <span>👤 <span id="rankMyName">Tú</span> (Tu Posición)</span>
+                        <span><span id="rankMyCoins">0</span></span>
+                    </div>
+                </div>
+
+                <!-- TAB 3: PROFILE & PAYMENTS -->
+                <div id="profile" class="tab-content">
+                    <div class="status-box">
+                        <div>📌</div>
+                        <div>
+                            <b>ESTADO REGISTRADO:</b><br>
+                            <span id="payStatusText">DATOS DE COBRO GUARDADOS EN TU PERFIL</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>1. Selecciona tu Plataforma de Pago Preferida:</label>
+                        <select id="selectMethod" class="form-control">
+                            <option value="Zinli">Zinli (Correo o @Usuario)</option>
+                            <option value="Binance">Binance Pay (ID o Correo)</option>
+                            <option value="PayPal">PayPal (Correo Electrónico)</option>
+                            <option value="PagoMovil">Pago Móvil (Banco / Cédula / Teléfono)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>2. Correo, ID o Datos de Pago Registrados:</label>
+                        <input type="text" id="inputPayData" class="form-control" placeholder="ejemplo@correo.com o 0414-0000000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>3. Tu Nombre o Alias de Jugador:</label>
+                        <input type="text" id="inputPlayerName" class="form-control" placeholder="Ej: Minero_Pro">
+                    </div>
+
+                    <button class="btn-action" style="width: 100%; padding: 14px;" onclick="savePaymentInfo()">GUARDAR DATOS DE COBRO</button>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- SECCIÓN RANKING TOP 10 (CENTRO) -->
-    <div class="lg:col-span-1 bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col justify-between">
-      <div>
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-            <span>🏆</span> Ranking Top 10 Semanal
-          </h2>
-          <span class="text-[10px] bg-amber-500/10 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">En Vivo</span>
-        </div>
+<div class="toast" id="toast">Notificación</div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="text-slate-400 border-b border-slate-800">
-                <th class="pb-2 font-semibold">Pos</th>
-                <th class="pb-2 font-semibold">Jugador</th>
-                <th class="pb-2 font-semibold text-right">Monedas</th>
-              </tr>
-            </thead>
-            <tbody id="ranking-body" class="divide-y divide-slate-800/50">
-              <!-- Se genera con script.js -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+<script>
+    let state = {
+        coins: 0,
+        clickPower: 1,
+        autoPower: 0,
+        up1Cost: 15,
+        up2Cost: 50,
+        up3Cost: 250,
+        up4Cost: 1000,
+        method: 'Zinli',
+        payData: '',
+        playerName: 'Minero_' + Math.floor(Math.random() * 900 + 100)
+    };
 
-      <div class="mt-4 p-3 bg-amber-950/30 border border-amber-500/20 rounded-xl text-center">
-        <p class="text-[11px] text-amber-200">
-          🥇 **1° Lugar:** $10.00 USD <br>
-          🥈 **2° Lugar:** $5.00 USD <br>
-          🥉 **3° Lugar:** $2.50 USD
-        </p>
-      </div>
-    </div>
+    function loadSave() {
+        const local = localStorage.getItem('neon_miner_pc_save');
+        if (local) {
+            try {
+                state = Object.assign(state, JSON.parse(local));
+            } catch(e) {}
+        }
+        document.getElementById('selectMethod').value = state.method;
+        document.getElementById('inputPayData').value = state.payData;
+        document.getElementById('inputPlayerName').value = state.playerName;
+        
+        updateStatusText();
+        updateUI();
+    }
 
-    <!-- SECCIÓN PERFIL DE COBRO (DERECHA) -->
-    <div class="lg:col-span-1 bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-2xl h-fit">
-      <h2 class="text-lg font-bold text-slate-200 mb-1">Perfil de Cobro P2E</h2>
-      <p class="text-xs text-slate-400 mb-4">Datos obligatorios para recibir tus premios si quedas en el Top 3.</p>
-      
-      <form id="payment-form" onsubmit="saveProfile(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Alias del Jugador</label>
-          <input type="text" id="player-alias" required placeholder="Ej: MineroNeon99" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none">
-        </div>
+    function saveGame() {
+        localStorage.setItem('neon_miner_pc_save', JSON.stringify(state));
+    }
 
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Método de Pago Preferido</label>
-          <select id="payment-method" onchange="renderPaymentFields()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none">
-            <option value="pago_movil">Pago Móvil (Venezuela)</option>
-            <option value="zinli">Zinli</option>
-            <option value="binance">Binance Pay</option>
-            <option value="paypal">PayPal</option>
-          </select>
-        </div>
+    function updateStatusText() {
+        const text = document.getElementById('payStatusText');
+        if (state.payData.trim() !== '') {
+            text.innerText = `DATOS DE COBRO GUARDADOS EN TU PERFIL (${state.method}: ${state.payData})`;
+        } else {
+            text.innerText = "PENDIENTE DE CONFIGURAR EN TU PERFIL";
+        }
+    }
 
-        <!-- CONTENEDOR DE CAMPOS DINÁMICOS -->
-        <div id="dynamic-payment-fields" class="space-y-2 pt-2 border-t border-slate-800">
-          <!-- Se genera con script.js -->
-        </div>
+    function updateUI() {
+        document.getElementById('coinCount').innerText = Math.floor(state.coins);
+        document.getElementById('clickPower').innerText = state.clickPower;
+        document.getElementById('autoPower').innerText = state.autoPower;
 
-        <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition-colors mt-3 shadow-lg">
-          Guardar Datos de Cobro
-        </button>
-      </form>
-    </div>
+        document.getElementById('cost1').innerText = state.up1Cost;
+        document.getElementById('cost2').innerText = state.up2Cost;
+        document.getElementById('cost3').innerText = state.up3Cost;
+        document.getElementById('cost4').innerText = state.up4Cost;
 
-  </main>
+        document.getElementById('btnBuy1').disabled = state.coins < state.up1Cost;
+        document.getElementById('btnBuy2').disabled = state.coins < state.up2Cost;
+        document.getElementById('btnBuy3').disabled = state.coins < state.up3Cost;
+        document.getElementById('btnBuy4').disabled = state.coins < state.up4Cost;
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 border-t border-slate-800 p-4 text-center text-xs text-slate-400">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-      <p>© 2026 Neon Miner P2E. Todos los derechos reservados.</p>
-      <div class="flex gap-4">
-        <a href="terminos.html" class="hover:underline">Términos y Condiciones</a>
-        <a href="privacidad.html" class="hover:underline">Política de Privacidad</a>
-      </div>
-    </div>
-  </footer>
+        document.getElementById('rankMyName').innerText = state.playerName;
+        document.getElementById('rankMyCoins').innerText = Math.floor(state.coins);
+    }
 
-  <script src="script.js"></script>
-</body>
-</html>
+    const crystal = document.getElementById('crystalBtn');
+    crystal.addEventListener('click', (e) => {
+        state.coins += state.clickPower;
+        createParticle(e.clientX, e.clientY, '+' + state.clickPower);
+        updateUI();
+        saveGame();
+    });
+
+    function createParticle(x, y, text) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-text';
+        particle.innerText = text;
+        
+        const rect = crystal.getBoundingClientRect();
+        const posX = x ? x - 15 : rect.left + rect.width / 2;
+        const posY = y ? y - 20 : rect.top + rect.height / 2;
+
+        particle.style.left = posX + 'px';
+        particle.style.top = posY + 'px';
+
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 800);
+    }
+
+    setInterval(() => {
+        if (state.autoPower > 0) {
+            state.coins += state.autoPower;
+            updateUI();
+            saveGame();
+        }
+    }, 1000);
+
+    function buyUpgrade(num) {
+        if (num === 1 && state.coins >= state.up1Cost) {
+            state.coins -= state.up1Cost;
+            state.clickPower += 1;
+            state.up1Cost = Math.floor(state.up1Cost * 1.5);
+        } else if (num === 2 && state.coins >= state.up2Cost) {
+            state.coins -= state.up2Cost;
+            state.autoPower += 2;
+            state.up2Cost = Math.floor(state.up2Cost * 1.5);
+        } else if (num === 3 && state.coins >= state.up3Cost) {
+            state.coins -= state.up3Cost;
+            state.autoPower += 10;
+            state.up3Cost = Math.floor(state.up3Cost * 1.5);
+        } else if (num === 4 && state.coins >= state.up4Cost) {
+            state.coins -= state.up4Cost;
+            state.autoPower += 50;
+            state.up4Cost = Math.floor(state.up4Cost * 1.5);
+        }
+        updateUI();
+        saveGame();
+    }
+
+    function savePaymentInfo() {
+        const method = document.getElementById('selectMethod').value;
+        const payData = document.getElementById('inputPayData').value.trim();
+        const playerName = document.getElementById('inputPlayerName').value.trim();
+
+        if (payData === '') {
+            showToast('⚠️ Ingresa un correo, ID o teléfono de pago.');
+            return;
+        }
+
+        state.method = method;
+        state.payData = payData;
+        if (playerName !== '') state.playerName = playerName;
+
+        saveGame();
+        updateStatusText();
+        updateUI();
+        showToast('✅ ¡Datos de cobro guardados en tu perfil!');
+    }
+
+    function watchAd() {
+        // Plantilla lista para conectar adBreak de AdSense en el futuro
+        if (typeof adBreak !== 'undefined
