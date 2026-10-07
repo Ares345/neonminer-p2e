@@ -8,17 +8,32 @@ let state = {
   lastSync: Date.now()
 };
 
+// JUGADORES SIMULADOS EN RANKING (MOCK LEADERBOARD)
+let leaderboard = [
+  { rank: 1, alias: "CryptoKing_VZLA", coins: 125400 },
+  { rank: 2, alias: "SatoshiMiner", coins: 98200 },
+  { rank: 3, alias: "NeonMaster99", coins: 75400 },
+  { rank: 4, alias: "ProClicker", coins: 43100 },
+  { rank: 5, alias: "MinerBot_X", coins: 29000 },
+  { rank: 6, alias: "ZinliWinner", coins: 18500 },
+  { rank: 7, alias: "BinanceBoy", coins: 12000 },
+  { rank: 8, alias: "GamerPro2026", coins: 8400 },
+  { rank: 9, alias: "Pedro_Miner", coins: 5100 }
+];
+
 // INICIALIZACIÓN
 document.addEventListener("DOMContentLoaded", () => {
   loadLocalState();
   renderPaymentFields();
   updateUI();
+  updateRankingUI();
   
   // Bucle de minería automática (1 seg)
   setInterval(() => {
     if (state.autoPower > 0) {
       state.coins += state.autoPower;
       updateUI();
+      updateRankingUI();
     }
   }, 1000);
 
@@ -30,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("mine-btn").addEventListener("click", () => {
   state.coins += state.clickPower;
   updateUI();
+  updateRankingUI();
 });
 
 // COMPRAR MEJORA CLIC
@@ -54,7 +70,7 @@ document.getElementById("upgrade-auto-btn").addEventListener("click", () => {
   }
 });
 
-// ACTUALIZAR INTERFAZ VISUAL
+// ACTUALIZAR INTERFAZ VISUAL DEL JUEGO
 function updateUI() {
   document.getElementById("coin-count").innerText = Math.floor(state.coins);
   document.getElementById("cps-display").innerText = state.autoPower;
@@ -62,6 +78,40 @@ function updateUI() {
   document.getElementById("upgrade-auto-cost").innerText = `Costo: ${state.autoCost} Monedas`;
   document.getElementById("click-power").innerText = `Nvl ${state.clickPower}`;
   document.getElementById("auto-power").innerText = `Nvl ${state.autoPower}`;
+}
+
+// ACTUALIZAR TABLA DE RANKING DENTRO DEL DOM
+function updateRankingUI() {
+  const profile = JSON.parse(localStorage.getItem("neon_user_profile") || "{}");
+  const myAlias = profile.alias || "Tú (Sin Alias)";
+  
+  // Clonar leaderboard y meter la puntuación actual del jugador
+  let fullList = [...leaderboard, { rank: 0, alias: myAlias, coins: Math.floor(state.coins) }];
+  
+  // Ordenar de mayor a menor saldo
+  fullList.sort((a, b) => b.coins - a.coins);
+
+  const tbody = document.getElementById("ranking-body");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  // Mostrar Top 10
+  fullList.slice(0, 10).forEach((item, index) => {
+    const isUser = item.alias === myAlias;
+    let rankBadge = `${index + 1}°`;
+    if (index === 0) rankBadge = "🥇 1°";
+    if (index === 1) rankBadge = "🥈 2°";
+    if (index === 2) rankBadge = "🥉 3°";
+
+    const tr = document.createElement("tr");
+    tr.className = isUser ? "bg-cyan-950/60 font-bold text-cyan-300" : "hover:bg-slate-800/40 text-slate-300";
+    tr.innerHTML = `
+      <td class="py-2">${rankBadge}</td>
+      <td class="py-2">${item.alias} ${isUser ? '<span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-1 rounded ml-1">TÚ</span>' : ''}</td>
+      <td class="py-2 text-right font-mono text-cyan-400">${item.coins.toLocaleString()}</td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 // RENDERIZADO DINÁMICO DE CAMPOS DE PAGO
@@ -133,6 +183,7 @@ function saveProfile(event) {
   const payload = { alias, method, details };
   localStorage.setItem("neon_user_profile", JSON.stringify(payload));
   alert("¡Datos de cobro guardados correctamente!");
+  updateRankingUI();
   syncWithServer();
 }
 
@@ -148,14 +199,15 @@ function watchAd() {
       adViewed: () => {
         state.coins += 100;
         updateUI();
+        updateRankingUI();
         saveLocalState();
         alert("¡Recompensa entregada: +100 Neon Coins!");
       }
     });
   } else {
-    // Fallback en desarrollo si no hay AdSense activo aún
     state.coins += 100;
     updateUI();
+    updateRankingUI();
     saveLocalState();
     alert("Modo Prueba: +100 Neon Coins entregadas.");
   }
